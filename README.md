@@ -20,7 +20,6 @@ angular.module('myApp', ['identity-map']);
 ## Usage
 
 "identity-map" module provides `identityMap` service for mapping purposes.
-"identity-map" assumes that all objects you want to be mapped has 2 attributes `id` and `class_name` which are used to identify objects.
 
 `identityMap` has three properties:
 
@@ -33,6 +32,11 @@ If `obj` is not a mappable object or array it will be returned as is.
 
 you can play with [live demo](http://plnkr.co/edit/hkzl2VDKrJq4s1cyjdZg?p=preview) to check its behavior.
 
+## Objects identification. "Mappable" objects.
+
+"identity-map" assumes that all objects you want to be mapped has 2 attributes `id` and `class_name` which are used to identify objects.
+All objects not matching this criteria will be ignored by identity-map.
+
 ## Integration with Restangular
 
 "identity-map" module provides simple and convenient way to integrate with Restangular.
@@ -43,7 +47,8 @@ function (Restangular, identityMapRestangular) {
   Restangular.addResponseInterceptor(identityMapRestangular.interceptResponse);
 });
 ```
-from now any Restangular response that has objects which are "mappable" for "identity-map" will be mapped automatically.
+From now any Restangular response that has objects which are "mappable" for "identity-map" will be mapped automatically.
+
 
 ## TODO
 
