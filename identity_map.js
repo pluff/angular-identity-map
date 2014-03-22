@@ -6,68 +6,66 @@
  */
 var module = angular.module('identity-map', []);
 
-module.service('identityMap', function() {
-  var isMappable, map, mapRecursive;
-  map = {};
+module.service('identityMap', function () {
+  var map = {}, mapRecursive, mapKey;
 
-  isMappable = function(obj) {
-    return angular.isArray(obj) || (angular.isObject(obj) && angular.isDefined(obj.id) && angular.isDefined(obj.class_name));
-  };
-
-  var mapKey = function(obj) {
-    return obj.id+obj.class_name;
+  mapKey = function (obj) {
+    if (angular.isObject(obj) &&
+        angular.isDefined(obj.id) &&
+        angular.isDefined(obj.class_name) &&
+        !angular.isFunction(obj.id) &&
+        !angular.isFunction(obj.class_name) &&
+        ) {
+      return obj.id + obj.class_name;
+    } else {
+      return undefined;
+    }
   }
 
-  mapRecursive = function(obj) {
-    var mappedObject;
+  mapRecursive = function (obj) {
     if (angular.isArray(obj)) {
-      angular.forEach(obj, function(value, index) {
-        if (isMappable(value)) {
-          obj[index] = mapRecursive(value);
-        }
+      angular.forEach(obj, function (value, index) {
+        obj[index] = mapRecursive(value);
       });
       return obj;
     } else {
-      if (isMappable(obj)) {
-        angular.forEach(obj, function(property, key) {
-          if (isMappable(property)) {
-            obj[key] = mapRecursive(property);
-          }
+      var objKey = mapKey(obj);
+      if (angular.isDefined(objKey)) {
+        angular.forEach(obj, function (property, key) {
+          obj[key] = mapRecursive(property);
         });
 
-        var objKey = mapKey(obj);
+        var mappedObject = map[objKey];
 
-        if (mappedObject = map[objKey]) {
+        if (mappedObject) {
           angular.extend(mappedObject, obj);
         } else {
           map[objKey] = obj;
           mappedObject = obj;
         }
         return mappedObject;
+      } else {
+        return obj;
       }
     }
   };
 
   return {
-    map: function(obj) {
-      if (isMappable(obj)) {
-        return mapRecursive(obj);
-      } else {
-        return obj;
-      }
+    map: function (obj) {
+      return mapRecursive(obj);
     },
-    flush: function() {
+    flush: function () {
       return map = {};
     },
-    getMap: function() {
+    getMap: function () {
       return map;
     }
   };
 });
 
-module.service('identityMapRestangular', function(identityMap) {
+module.service('identityMapRestangular', function (identityMap) {
   return {
-    interceptResponse: function(data, operation, what, url, response, deffered) {
+    interceptResponse: function (data, operation, what, url, response, deffered) {
       return identityMap.map(data);
     }
   };
