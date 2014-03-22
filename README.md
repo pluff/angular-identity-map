@@ -54,7 +54,6 @@ From now any Restangular response that has objects which are "mappable" for "ide
 
 1. Tests! We need tests!
 1. Extend identity-map functionality to optionally prevent already-loaded objects from loading again. request interceptor for Restangular wanted!
-1. More configurable behaviour. E.g. unique id getter can be configurable function.
 1. Bower\grunt support.
 
 ## Contribute

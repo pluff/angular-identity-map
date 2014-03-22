@@ -6,7 +6,7 @@
  */
 var module = angular.module('identity-map', []);
 
-module.service('identityMap', function () {
+module.provider('identityMap', function () {
   var map = {}, mapRecursive, uidGetter, getByUid, setByUid, ensureMapTree;
 
   uidGetter = function (obj) {
@@ -83,14 +83,21 @@ module.service('identityMap', function () {
   };
 
   return {
-    map: function (obj) {
-      return mapRecursive(obj);
+    $get: function () {
+      return {
+        map: function (obj) {
+          return mapRecursive(obj);
+        },
+        flush: function () {
+          return map = {};
+        },
+        getMap: function () {
+          return map;
+        }
+      };
     },
-    flush: function () {
-      return map = {};
-    },
-    getMap: function () {
-      return map;
+    setUidGetter: function (uidGetterFn) {
+      uidGetter = uidGetterFn;
     }
   };
 });
