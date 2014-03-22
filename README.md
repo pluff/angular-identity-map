@@ -34,8 +34,31 @@ you can play with [live demo](http://plnkr.co/edit/hkzl2VDKrJq4s1cyjdZg?p=previe
 
 ## Objects identification. "Mappable" objects.
 
-"identity-map" assumes that all objects you want to be mapped has 2 attributes `id` and `class_name` which are used to identify objects.
+By default "identity-map" assumes that all objects you want to be mapped has 2 attributes `id` and `class_name` which are used to identify objects.
 All objects not matching this criteria will be ignored by identity-map.
+
+If you want to customize this behavior you can configure "identity-map" in your `config` block:
+```javascript
+app.config(function(identityMapProvider) {
+  identityMapProvider.setUidGetter(getterFn);
+});
+```
+Uid getter function MUST return a unique value per object if object is mappable and `undefined` if object is not mappable.
+
+For performance reasons it is recommended to split your `uid` into at least 2 parts. In case your `uid` consist of more than 1 part `uidGetter` function must return an array.
+Example uidGetter with more than one part:
+```javascript
+  function(obj) {
+    if (angular.isObject(obj) &&
+        angular.isDefined(obj.id) &&
+        angular.isDefined(obj.class_name)) {
+      return [obj.class_name, obj.id];
+    } else {
+      return undefined;
+    }
+  }
+```
+
 
 ## Integration with Restangular
 
