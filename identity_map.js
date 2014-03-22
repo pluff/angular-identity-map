@@ -14,6 +14,10 @@ module.service('identityMap', function() {
     return angular.isArray(obj) || (angular.isObject(obj) && angular.isDefined(obj.id) && angular.isDefined(obj.class_name));
   };
 
+  var mapKey = function(obj) {
+    return obj.id+obj.class_name;
+  }
+
   mapRecursive = function(obj) {
     var mappedObject;
     if (angular.isArray(obj)) {
@@ -30,12 +34,13 @@ module.service('identityMap', function() {
             obj[key] = mapRecursive(property);
           }
         });
-        var _name;
-        map[_name = obj.class_name] || (map[_name] = {});
-        if (mappedObject = map[obj.class_name][obj.id]) {
+
+        var objKey = mapKey(obj);
+
+        if (mappedObject = map[objKey]) {
           angular.extend(mappedObject, obj);
         } else {
-          map[obj.class_name][obj.id] = obj;
+          map[objKey] = obj;
           mappedObject = obj;
         }
         return mappedObject;
