@@ -7,20 +7,46 @@
 var module = angular.module('identity-map', []);
 
 module.service('identityMap', function () {
-  var map = {}, mapRecursive, mapKey;
+  var map = {}, mapRecursive, uidGetter, getByUid, setByUid, ensureMapTree;
 
-  mapKey = function (obj) {
+  uidGetter = function (obj) {
     if (angular.isObject(obj) &&
         angular.isDefined(obj.id) &&
         angular.isDefined(obj.class_name) &&
         !angular.isFunction(obj.id) &&
-        !angular.isFunction(obj.class_name) &&
-        ) {
-      return obj.id + obj.class_name;
+        !angular.isFunction(obj.class_name)) {
+      return [obj.class_name , obj.id];
     } else {
       return undefined;
     }
-  }
+  };
+
+  getByUid = function(uid) {
+    var result = map;
+    angular.forEach(uid, function(namespace) {
+      result = result[namespace];
+    });
+    return result;
+  };
+
+  setByUid = function(uid, value) {
+    var result = map;
+    angular.forEach(uid, function(namespace) {
+      result = result[namespace];
+    });
+    return result = value;
+  };
+
+  ensureMapTree = function(uid) {
+    var namespace, subtree = map;
+    for (var i = 0; i < uid.length - 1; i++) { //last item is not a part of tree
+      namespace = uid[i];
+      if (angular.isUndefined(subtree[namespace])) {
+        subtree[namespace] = {};
+        subtree = subtree[namespace];
+      }
+    }
+  };
 
   mapRecursive = function (obj) {
     if (angular.isArray(obj)) {
@@ -29,18 +55,24 @@ module.service('identityMap', function () {
       });
       return obj;
     } else {
-      var objKey = mapKey(obj);
-      if (angular.isDefined(objKey)) {
+      var objUid = uidGetter(obj);
+      if (angular.isDefined(objUid)) {
+        if (!angular.isArray(objUid)) { //ensure our UID is an array
+          objUid = [objUid];
+        }
+
         angular.forEach(obj, function (property, key) {
           obj[key] = mapRecursive(property);
         });
 
-        var mappedObject = map[objKey];
+        ensureMapTree(objUid);
+
+        var mappedObject = getByUid(objUid);
 
         if (mappedObject) {
           angular.extend(mappedObject, obj);
         } else {
-          map[objKey] = obj;
+          setByUid(objUid, obj);
           mappedObject = obj;
         }
         return mappedObject;
