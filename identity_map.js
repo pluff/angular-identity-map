@@ -22,29 +22,28 @@ module.provider('identityMap', function () {
   };
 
   getByUid = function(uid) {
-    var result = map;
-    angular.forEach(uid, function(namespace) {
+    var result = map, namespace;
+    for (var i = 0; i < uid.length; i++ ) {
+      namespace = uid[i];
+      if (angular.isUndefined(result[namespace])) {
+        return undefined;
+      }
       result = result[namespace];
-    });
+    }
     return result;
   };
 
   setByUid = function(uid, value) {
-    var result = map;
-    angular.forEach(uid, function(namespace) {
-      result = result[namespace];
-    });
-    return result = value;
-  };
-
-  ensureMapTree = function(uid) {
-    var namespace, subtree = map;
-    for (var i = 0; i < uid.length - 1; i++) { //last item is not a part of tree
+    var result = map, namespace;
+    for (var i = 0; i < uid.length; i++ ) {
       namespace = uid[i];
-      if (angular.isUndefined(subtree[namespace])) {
-        subtree[namespace] = {};
-        subtree = subtree[namespace];
+      if (angular.isUndefined(result[namespace])) { //ensure tree structure
+        result[namespace] = {};
       }
+      if (i == uid.length - 1) {
+        return result[namespace] = value;
+      }
+      result = result[namespace];
     }
   };
 
@@ -65,8 +64,6 @@ module.provider('identityMap', function () {
           obj[key] = mapRecursive(property);
         });
 
-        ensureMapTree(objUid);
-
         var mappedObject = getByUid(objUid);
 
         if (mappedObject) {
@@ -81,6 +78,7 @@ module.provider('identityMap', function () {
       }
     }
   };
+
 
   return {
     $get: function () {
