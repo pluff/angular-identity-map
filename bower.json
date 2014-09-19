@@ -1,0 +1,25 @@
+{
+  "name": "angular-identity-map",
+  "version": "0.1.0",
+  "description": "An Identity Map implementation for push-based AngularJS applications.",
+  "author": "Dan Baumann",
+  "license": "MIT",
+  "homepage": "https://github.com/dbaumann/angular-identity-map",
+  "main": "./src/coffee/IdentityMap.coffee",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test*",
+    "demo*",
+    "gruntFile.js",
+    "package.json"
+  ],
+  "dependencies": {
+    "angular": "~1.x",
+    "traverse": "~0.6.x"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.x"
+  }
+}

@@ -1,0 +1,23 @@
+*.diff
+*.err
+*.orig
+*.log
+*.rej
+*.swo
+*.swp
+*.vi
+*~
+.DS_Store
+.cache
+.settings
+Thumbs.db
+*.sublime-workspace
+
+# if you have one of these which you'd like this project to use, please submit a PR
+.project
+.idea
+nbproject
+.tmproj
+
+node_modules
+components
