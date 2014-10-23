@@ -1,0 +1,34 @@
+{
+  "name": "angular-identity-map",
+  "version": "0.1.0",
+  "homepage": "https://github.com/pluff/angular-identity-map",
+  "description": "An Identity Map implementation for AngularJS applications.",
+  "authors": [
+    "Pavel Shutin <publicshady@gmail.com>"
+  ],
+  "keywords": [
+    "angular",
+    "identitymap",
+    "identity",
+    "map",
+    "angularjs"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test*",
+    "spec",
+    "gruntFile.js",
+    "package.json"
+  ],
+  "dependencies": {
+    "angular": "~1.x"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.x"
+  }
+}
+
+
