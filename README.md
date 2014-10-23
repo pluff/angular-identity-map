@@ -1,17 +1,16 @@
-# Angular Identity Map
-An AngularJS module that provides [identity map pattern](http://en.wikipedia.org/wiki/Identity_map_pattern) for Angular.
+## angular-identity-map
+
+An [identity map pattern](http://en.wikipedia.org/wiki/Identity_map_pattern) implementation for AngularJS applications.
 
 ## Requirements
 
 AngularJS v1.0+
+traverse
 
 ## Getting started
 
 Download [identity_map.js](https://raw.githubusercontent.com/pluff/angular-identitymap/master/identity_map.js) and include it on your page along with AngularJS
-```html
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
-<script src="/identity_map.js"></script>
-```
+
 Add `identity-map` to your module dependencies
 ```javascript
 angular.module('myApp', ['identity-map']);
@@ -19,65 +18,103 @@ angular.module('myApp', ['identity-map']);
 
 ## Usage
 
-"identity-map" module provides `identityMap` service for mapping purposes.
+### Pre-requirements
+All objects you want to map must have `id` attribute and `class_name` attribute in order to retrieve object identification pair. This pair (class_name, id) MUST be unique.
+Both these behaviors can be customized. See Configuration chapter below.
 
-`identityMap` has three properties:
 
-+ `map`: is a function that accepts one param `obj`. This function will save\update mapped version of `obj` and return it.
-This function crawls through the `obj` and maps all child objects too. `map` function accepts arrays as well as single objects.
-If `obj` is not a mappable object or array it will be returned as is.
+### All you need is .map
 
-+ `flush`: is a function with no arguments. Flushes entire map.
-+ `getMap`: is a function with no arguments. Returns entire identity map. Used mainly for debugging purposes.
-
-you can play with [live demo](http://plnkr.co/edit/hkzl2VDKrJq4s1cyjdZg?p=preview) to check its behavior.
-
-## Objects identification. "Mappable" objects.
-
-By default "identity-map" assumes that all objects you want to be mapped has 2 attributes `id` and `class_name` which are used to identify objects.
-All objects not matching this criteria will be ignored by identity-map.
-
-If you want to customize this behavior you can configure "identity-map" in your `config` block:
 ```javascript
-app.config(function(identityMapProvider) {
-  identityMapProvider.setUidGetter(getterFn);
+var myAppModule = angular.module("MyApp", ["identity-map"]);
+
+myAppModule.controller("myController", function($scope, IdentityMap) {
+  $scope.phoneList = [
+    {id: 1, class_name: 'Phone', name: 'Emergency', value: '911'}
+  ];
+  IdentityMap.map($scope.phoneList);
+  
+  //Let's assume you somehow retrieved new phone list e.g. by using Restangular
+   newPhoneList = [
+     {id: 1, class_name: 'Phone', name: 'Emergency', value: 'call-911'},
+     {id: 2, class_name: 'Phone', name: 'Mommy', value: '12345'}
+   ];
+   IdentityMap.map(newPhoneList); 
+   $scope.phoneList[0].value; // "call-911"
+   //However your $scope.phoneList still has 1 item, while newPhoneList has 2 items. 
+   //Remember, IdentityMap stores objects only.
+}
+```
+
+You can see and play around with [live demo](http://plnkr.co/edit/jDiMgjnQYitBYTx9Mqth?p=preview)! 
+
+### Others methods for those, who want to dig deeply into identity map
+
+There are several methods available such as `.get`, `.set`, `.detach`, `.clear` etc. 
+Check out the source code for more information.
+
+### Configuration
+
+identity-map stores and retrieves object using object type and object id.
+By default object id is retrieved by calling `id` attribute on an object. Object type retrieved by calling `class_name` attribute on an object.
+These functions are configurable in service provider:
+Example:
+```javascript
+app.config(function(IdentityMapProvider) {
+  //retrieves object type for mapping from object constructor name.
+  IdentityMapProvider.setEntityTypeFn(function(entity) { 
+    return entity.constructor.name; 
+  });
+  //retrieves object id for mapping by calling "getGlobalId" function.
+  IdentityMapProvider.setEntityFn(function(type, entity) { 
+      return entity.getGlobalId(); 
+    });  
 });
 ```
-Uid getter function MUST return a unique value per object if object is mappable and `undefined` if object is not mappable.
+Please pay attention to couple requirements for these functions:
 
-For performance reasons it is recommended to split your `uid` into at least 2 parts. In case your `uid` consist of more than 1 part `uidGetter` function must return an array.
-Example uidGetter with more than one part:
-```javascript
-  function(obj) {
-    if (angular.isObject(obj) &&
-        angular.isDefined(obj.id) &&
-        angular.isDefined(obj.class_name)) {
-      return [obj.class_name, obj.id];
-    } else {
-      return undefined;
-    }
-  }
-```
+1. Any pair of (entityType, entityId) values MUST represent one and only one entity object.
+2. Both functions accept one param which is guaranteed to be an object. If `entity` param is not a mappable object both functions MUST return `undefined`.  
 
+More examples can be found in spec/IdentityMap_spec.coffee
 
-## Integration with Restangular
+### Integration with Restangular
 
-"identity-map" module provides simple and convenient way to integrate with Restangular.
-You just need to add identity-map response interceptor to Restangular stack:
+"identity-map" can be integrated with Restangular easily.
+You just need to add simple response interceptor to Restangular stack:
 ```javascript
 angular.module('myApp', ['restangular', 'identity-map']).run(
-function (Restangular, identityMapRestangular) {
-  Restangular.addResponseInterceptor(identityMapRestangular.interceptResponse);
+function (Restangular, IdentityMap) {
+  Restangular.addResponseInterceptor(
+    function (data, operation, what, url, response, deffered) {
+      return IdentityMap.map(data);
+    }
+  );
 });
 ```
-From now any Restangular response that has objects which are "mappable" for "identity-map" will be mapped automatically.
+Starting from now any Restangular response with "mappable" objects will be mapped automatically.
 
 
-## TODO
+## Development
 
-1. Tests! We need tests!
-1. Extend identity-map functionality to optionally prevent already-loaded objects from loading again. request interceptor for Restangular wanted!
-1. Bower\grunt support.
+Code quality is ensured with CoffeeScript, CoffeeLint, and Karma.
+```sh
+npm install -g grunt-cli
+npm install && bower install
+grunt
+```
+
+### Live Reloading
+
+```sh
+grunt karma:unit:start watch
+```
+
+### Build
+
+```sh
+grunt dist
+```
 
 ## Contribute
 
