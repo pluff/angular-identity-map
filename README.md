@@ -9,8 +9,18 @@ traverse
 
 ## Getting started
 
-Download [identity_map.js](https://raw.githubusercontent.com/pluff/angular-identitymap/master/identity_map.js) and include it on your page along with AngularJS
+### with bower
 
+Just include "angular-identity-map" to your dependencies list and run `bower install`
+
+### with npm
+
+`npm install angular-identity-map`
+
+
+### manually
+
+Download [angular-identity-map.js](https://raw.githubusercontent.com/pluff/angular-identity-map/master/dist/angular-identity-map.min.js) and include it on your page along with AngularJS
 Add `identity-map` to your module dependencies
 ```javascript
 angular.module('myApp', ['identity-map']);
@@ -116,6 +126,11 @@ grunt karma:unit:start watch
 grunt dist
 ```
 
+## TODO
+
+See [issues list](https://github.com/pluff/angular-identity-map/issues?q=is%3Aopen)
+
+
 ## Contribute
 
 1. Fork
@@ -124,6 +139,6 @@ grunt dist
 
 ## License
 
-[MIT](https://raw.githubusercontent.com/pluff/angular-identitymap/master/LICENSE)
+[MIT](https://raw.githubusercontent.com/pluff/angular-identity-map/master/LICENSE)
 
 
