@@ -69,7 +69,7 @@
           map: function(obj) {
             var existingEntity, existingTraverse, newTraverse, self;
             if (!this.isMappable(obj)) {
-              if (Array.isArray(obj)) {
+              if (Array.isArray(obj) || angular.isObject(obj)) {
                 angular.forEach(obj, (function(_this) {
                   return function(value, key) {
                     return obj[key] = _this.map(value);

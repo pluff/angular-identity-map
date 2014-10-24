@@ -62,8 +62,8 @@ describe "identity-map", ->
 
     describe ".map", ->
       describe 'when passed param is not mappable', ->
-        describe 'for arrays', ->
-          it 'returns same array with all elements mapped', ->
+        describe 'for arrays & objects', ->
+          it 'returns same array\object with all elements mapped', ->
             arr = [1, 2]
             IdentityMap.map(arr)
             expect(arr).toEqual([1, 2])
@@ -77,9 +77,14 @@ describe "identity-map", ->
             IdentityMap.map arr
             expect(arr).toEqual([myBook, myBook])
 
-        describe 'for non-arrays', ->
+            updatedAgainBook = new Book(myBook)
+            test_object = {book: updatedAgainBook}
+            IdentityMap.map test_object
+            expect(test_object.book).toBe myBook
+
+
+        describe 'for scalars', ->
           it 'simply returns value back', ->
-            expect(IdentityMap.map({})).toEqual {}
             expect(IdentityMap.map(1)).toEqual 1
             expect(IdentityMap.map('')).toEqual ''
 
@@ -132,6 +137,16 @@ describe "identity-map", ->
           expect(book2.name).toEqual 'Name 2'
           expect(parent_book.name).toEqual 'Name 3'
           expect(collection1.items).toEqual [book1, book2]
+
+        describe "when passed object is not mappable", ->
+          response = undefined
+          beforeEach ->
+            response = {status: 200, body: updatedBook}
+
+          it 'still maps all object properties', ->
+            mapped_response = IdentityMap.map(response)
+            expect(mapped_response).toBe response
+            expect(mapped_response.body).toBe myBook
 
     describe ".clear", ->
       it "removes all object from identity map, but keeps object references untouched", ->

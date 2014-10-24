@@ -56,7 +56,7 @@ angular.module("identity-map", [])
       # adds all mappable children recursively.
       # returns mapped entity.
       unless @isMappable obj
-        if Array.isArray(obj)
+        if Array.isArray(obj) || angular.isObject(obj)
           angular.forEach obj, (value, key) =>
             obj[key] = @map value
         return obj
