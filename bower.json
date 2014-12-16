@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "homepage": "https://github.com/pluff/angular-identity-map",
   "description": "An Identity Map implementation for AngularJS applications.",
+  "main": "./dist/angular-identity-map.js",
   "authors": [
     "Pavel Shutin <publicshady@gmail.com>"
   ],
