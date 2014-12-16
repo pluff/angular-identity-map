@@ -21,8 +21,8 @@
     "bower_components",
     "test*",
     "spec",
-    "gruntFile.js",
-    "coffeelint.js",
+    "gruntfile.js",
+    "coffeelint.json",
     "package.json"
   ],
   "dependencies": {
