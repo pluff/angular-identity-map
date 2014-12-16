@@ -1,11 +1,11 @@
 {
   "name": "angular-identity-map",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://github.com/pluff/angular-identity-map",
   "description": "An Identity Map implementation for AngularJS applications.",
   "main": "./dist/angular-identity-map.js",
   "authors": [
-    "Pavel Shutin <publicshady@gmail.com>"
+    "Pavel Shutsin <publicshady@gmail.com>"
   ],
   "keywords": [
     "angular",
@@ -22,6 +22,7 @@
     "test*",
     "spec",
     "gruntFile.js",
+    "coffeelint.js",
     "package.json"
   ],
   "dependencies": {
